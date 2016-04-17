@@ -16,7 +16,8 @@ navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mo
 require(["game/Game", 
     "Pixi",
     "Three"],
-function(Game, Pixi, Three) {
+function(Game, Pixi, Three)
+{
     var root = new Pixi.Container(0x6699FF);
 
     var pixiRenderer = Pixi.autoDetectRenderer(window.innerWidth, window.innerHeight, {view: document.getElementById('pixiCanvas')});

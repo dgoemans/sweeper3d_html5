@@ -1,16 +1,20 @@
-define(["Pixi", "Three"],
-function(Pixi, Three)
+define([
+    "Pixi",
+    "Three",
+    "game/Cube"],
+function(Pixi, Three, Cube)
 {
     function Game(root, pixiRenderer, threeScene, threeCamera)
     {
         this.totalElapsed = 0;
         this.container = new Pixi.Container();
+
         root.addChild(this.container);
         
         this.sprites = [];
         var texture = Pixi.Texture.fromImage('assets/white_32.png');
         
-        this.mouse = pixiRenderer.plugins.interaction.mouse ? pixiRenderer.plugins.interaction.mouse.global : null;
+        this.mouse = pixiRenderer.plugins.interaction.mouse ? pixiRenderer.plugins.interaction.mouse : null;
         
         var minSize = Math.min(window.innerHeight,window.innerWidth);
         
@@ -35,17 +39,19 @@ function(Pixi, Three)
             }
         }
 
-        this.initThree(threeScene, threeCamera);
+        document.body.addEventListener('mousedown',  function(e){ this.mouseDown(e) }.bind(this), true);
 
+        this.initThree(threeScene, threeCamera);
+    };
+
+    Game.prototype.mouseDown = function()
+    {
+        this.cube.updateInput(this.mouse, true);
     };
 
     Game.prototype.initThree = function(threeScene, threeCamera)
     {
-        var geometry = new Three.BoxGeometry( 1, 1, 1 );
-        var material = new Three.MeshLambertMaterial( { color: 0x00ff00 } );
-        this.cube = new Three.Mesh( geometry, material );
-        threeScene.add( this.cube );
-        threeCamera.position.z = 5;
+        threeCamera.position.z = 7;
 
         var ambientLight = new Three.AmbientLight( 0x777777 );
         threeScene.add( ambientLight );
@@ -53,6 +59,10 @@ function(Pixi, Three)
         var directionalLight = new Three.DirectionalLight( 0xffffff, 0.5 );
         directionalLight.position.set( 3, 10, 0 );
         threeScene.add( directionalLight );
+
+
+        this.cube = new Cube(threeScene, threeCamera);
+
     };
 
     Game.prototype.update = function(delta)
@@ -68,11 +78,13 @@ function(Pixi, Three)
             
             var blueFuzz = Math.random()*0.30 * yFactor + 0.5;
             var mouseFactor = 0;
-            
-            if(this.mouse)
+
+            var mousePosition = this.mouse.global;
+
+            if(mousePosition)
             {
                 var radius = window.innerHeight/3;
-                var dist = Math.sqrt( (this.mouse.x - sprite.position.x)*(this.mouse.x - sprite.position.x) + (this.mouse.y - sprite.position.y)*(this.mouse.y - sprite.position.y) );
+                var dist = Math.sqrt( (mousePosition.x - sprite.position.x)*(mousePosition.x - sprite.position.x) + (mousePosition.y - sprite.position.y)*(mousePosition.y - sprite.position.y) );
                 dist = (radius - dist)/radius;
                 dist = Math.min(Math.max(0,dist),1);
                 
@@ -86,9 +98,13 @@ function(Pixi, Three)
                 
         }, this);
 
-        this.cube.rotateX(1*delta);
-        this.cube.rotateY(1*delta);
-        //this.cube.rotateOnAxis(new Three.Vector3(0.2,0.2,0.2), 10*delta);
+        if (this.mouse)
+        {
+            this.cube.updateInput(this.mouse, false);
+        }
+
+        this.cube.update(delta);
+
     };
     
     Game.prototype.render = function()

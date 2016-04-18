@@ -9,6 +9,10 @@ function(Pixi, Three, Cube)
         this.totalElapsed = 0;
         this.container = new Pixi.Container();
 
+        this.lastMousePosition = new Three.Vector2(0,0);
+
+
+
         root.addChild(this.container);
         
         this.sprites = [];
@@ -41,12 +45,46 @@ function(Pixi, Three, Cube)
 
         document.body.addEventListener('mousedown',  function(e){ this.mouseDown(e) }.bind(this), true);
 
+        document.body.addEventListener('mouseup',  function(e){ this.mouseUp(e) }.bind(this), true);
+
+        this.state = Game.State.NORMAL;
+
         this.initThree(threeScene, threeCamera);
     };
 
-    Game.prototype.mouseDown = function()
+    Game.State = {
+        NORMAL : 1,
+        DRAGGING: 2
+    };
+
+    Game.prototype.mouseDown = function(event)
     {
-        this.cube.updateInput(this.mouse, true);
+        var selected = this.cube.updateInput(this.mouse);
+
+        if (selected)
+        {
+            if (event.button === 0)
+            {
+                this.cube.clearSelected();
+            }
+            else if (event.button === 2)
+            {
+                this.cube.flagSelected();
+            }
+        }
+        else
+        {
+            this.lastMousePosition.copy(this.mouse.global);
+
+            this.state = Game.State.DRAGGING;
+        }
+    };
+
+    Game.prototype.mouseUp = function()
+    {
+        this.lastMousePosition.set(0,0);
+
+        this.state = Game.State.NORMAL;
     };
 
     Game.prototype.initThree = function(threeScene, threeCamera)
@@ -98,15 +136,32 @@ function(Pixi, Three, Cube)
                 
         }, this);
 
-        if (this.mouse)
+        switch(this.state)
         {
-            this.cube.updateInput(this.mouse, false);
+            case Game.State.NORMAL:
+                this.cube.updateInput(this.mouse);
+                break;
+            case Game.State.DRAGGING:
+                this.updateDragging();
+                break;
         }
+
 
         this.cube.update(delta);
 
     };
-    
+
+    Game.prototype.updateDragging = function()
+    {
+        var scale = 0.005;
+        var x = (this.mouse.global.x - this.lastMousePosition.x)*scale;
+        var y = (this.mouse.global.y - this.lastMousePosition.y)*scale;
+
+        this.lastMousePosition.copy(this.mouse.global);
+
+        this.cube.rotate(x, y);
+    }
+
     Game.prototype.render = function()
     {
         

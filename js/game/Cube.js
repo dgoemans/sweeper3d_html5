@@ -42,13 +42,10 @@ define(["Three",
 
         Cube.prototype.update = function(delta)
         {
-            this.root.rotateX(0.05*delta);
-
-            this.root.rotateY(0.07*delta);
         };
 
 
-        Cube.prototype.updateInput = function(input, activate)
+        Cube.prototype.updateInput = function(input)
         {
             this.deselect();
 
@@ -81,20 +78,32 @@ define(["Three",
 
                     if (tile.sceneObject === closest)
                     {
-                        activate ? this.activate(tile) : this.select(tile);
+                        this.select(tile);
 
                         break;
                     }
                 };
             }
 
+            return this.selected;
         };
 
-        Cube.prototype.activate = function(tile)
+        Cube.prototype.clearSelected = function()
         {
+            var tile = this.selected;
+
             this.selected = null;
 
-            tile.activate();
+            tile.clear();
+        };
+
+        Cube.prototype.flagSelected = function()
+        {
+            var tile = this.selected;
+
+            this.selected = null;
+
+            tile.flag();
         };
 
         Cube.prototype.select = function(tile)
@@ -114,6 +123,13 @@ define(["Three",
             {
                 tile.deselect();
             }
+        };
+
+        Cube.prototype.rotate = function(x,y)
+        {
+            this.root.rotateY(x);
+
+            this.root.rotateX(y);
         };
 
         return Cube;

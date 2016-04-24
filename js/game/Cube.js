@@ -34,11 +34,9 @@ define(["Three",
                     }
                 }
             }
-
         }
 
         Cube.DIMENSIONS = 4;
-
 
         Cube.prototype.update = function(delta)
         {
@@ -127,9 +125,13 @@ define(["Three",
 
         Cube.prototype.rotate = function(x,y)
         {
-            this.root.rotateY(x);
+            var rotator = new Three.Quaternion();
 
-            this.root.rotateX(y);
+            rotator.setFromEuler(new Three.Euler(y,x,0));
+
+            rotator.multiply(this.root.quaternion);
+
+            this.root.quaternion.copy(rotator);
         };
 
         return Cube;

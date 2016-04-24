@@ -11,7 +11,7 @@ function(Pixi, Three, Cube)
 
         this.lastMousePosition = new Three.Vector2(0,0);
 
-
+        this._screenRatio = new Three.Vector2(180.0/window.innerWidth, 180.0/window.innerHeight);
 
         root.addChild(this.container);
         
@@ -153,14 +153,19 @@ function(Pixi, Three, Cube)
 
     Game.prototype.updateDragging = function()
     {
-        var scale = 0.005;
-        var x = (this.mouse.global.x - this.lastMousePosition.x)*scale;
-        var y = (this.mouse.global.y - this.lastMousePosition.y)*scale;
+        //var scale = 0.005;
+        var x = (this.mouse.global.x - this.lastMousePosition.x);
+        var y = (this.mouse.global.y - this.lastMousePosition.y);
 
         this.lastMousePosition.copy(this.mouse.global);
 
+        var speed = 0.02;
+
+        x = this._screenRatio.x * x * speed;
+        y = this._screenRatio.y * y * speed;
+
         this.cube.rotate(x, y);
-    }
+    };
 
     Game.prototype.render = function()
     {

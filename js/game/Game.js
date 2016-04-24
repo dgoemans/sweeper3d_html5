@@ -49,6 +49,8 @@ function(Pixi, Three, Cube)
 
         this.state = Game.State.NORMAL;
 
+        this._totalDragLengthSqr = 0;
+
         this.initThree(threeScene, threeCamera);
     };
 
@@ -59,9 +61,22 @@ function(Pixi, Three, Cube)
 
     Game.prototype.mouseDown = function(event)
     {
+        this._totalDragLengthSqr = 0;
+
+        this.lastMousePosition.copy(this.mouse.global);
+
+        this.state = Game.State.DRAGGING;
+    };
+
+    Game.prototype.mouseUp = function()
+    {
+        this.lastMousePosition.set(0,0);
+
+        this.state = Game.State.NORMAL;
+
         var selected = this.cube.updateInput(this.mouse);
 
-        if (selected)
+        if(this._totalDragLengthSqr < 25 && selected)
         {
             if (event.button === 0)
             {
@@ -72,19 +87,6 @@ function(Pixi, Three, Cube)
                 this.cube.flagSelected();
             }
         }
-        else
-        {
-            this.lastMousePosition.copy(this.mouse.global);
-
-            this.state = Game.State.DRAGGING;
-        }
-    };
-
-    Game.prototype.mouseUp = function()
-    {
-        this.lastMousePosition.set(0,0);
-
-        this.state = Game.State.NORMAL;
     };
 
     Game.prototype.initThree = function(threeScene, threeCamera)
@@ -153,9 +155,10 @@ function(Pixi, Three, Cube)
 
     Game.prototype.updateDragging = function()
     {
-        //var scale = 0.005;
         var x = (this.mouse.global.x - this.lastMousePosition.x);
         var y = (this.mouse.global.y - this.lastMousePosition.y);
+
+        this._totalDragLengthSqr += (x*x + y*y);
 
         this.lastMousePosition.copy(this.mouse.global);
 

@@ -1,7 +1,7 @@
-define(["Three", "game/TileValue"],
-    function(Three, TileValue)
+define(["Three", "game/TileValue", 'game/Bomb'],
+    function(Three, TileValue, Bomb)
     {
-        function Tile(threeScene, x, y, z, value)
+        function Tile(threeScene, x, y, z)
         {
             this.geometry = new Three.BoxGeometry( Tile.SIZE, Tile.SIZE, Tile.SIZE );
 
@@ -15,7 +15,23 @@ define(["Three", "game/TileValue"],
 
             this.sceneObject.position.set(x,y,z);
 
-            this.value = new TileValue(threeScene, x, y, z);
+            this.sceneObject.castShadow = true;
+
+            this.sceneObject.receiveShadow = true;
+
+            this.isBomb = false;
+
+            this.threeScene = threeScene;
+
+            this.x = x;
+
+            this.y = y;
+
+            this.z = z;
+
+            this.bomb = null;
+
+            this.value = null;
         }
 
         Tile.State = {
@@ -24,7 +40,26 @@ define(["Three", "game/TileValue"],
             CLEARED: 3
         };
 
-        Tile.SIZE = 0.95;
+        Tile.SIZE = 0.9;
+
+        Tile.prototype.setBomb = function()
+        {
+            this.isBomb = true;
+
+            this.bomb = new Bomb(this.threeScene, this.x, this.y, this.z);
+        };
+
+        Tile.prototype.setValue = function(value)
+        {
+            this.value = new TileValue(this.threeScene, this.x, this.y, this.z, 0);
+
+            this.value.setValue(value);
+        };
+
+        Tile.prototype.getValue = function()
+        {
+            return this.value.value;
+        };
 
         Tile.prototype.flag = function()
         {

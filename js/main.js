@@ -28,6 +28,12 @@ function(Game, Pixi, Three)
     threeRenderer.setSize( window.innerWidth, window.innerHeight );
     threeRenderer.setClearColor( 0xffffff, 0.0 );
 
+    threeRenderer.antialias  = true;
+
+    threeRenderer.shadowMapEnabled = false;
+
+    threeRenderer.shadowMap.type = Three.PCFShadowMap;
+
     var game = new Game(root, pixiRenderer, threeScene, threeCamera);
 
     var lastTime = Date.now();

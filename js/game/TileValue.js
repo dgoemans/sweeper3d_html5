@@ -11,8 +11,18 @@ define(["Three"],
 
             this.sceneObject.position.set(x,y,z);
 
+            this.value = 0;
+
             threeScene.add( this.sceneObject );
         }
+
+        TileValue.prototype.setValue = function(value)
+        {
+            this.value = value;
+
+            this.sceneObject.scale.multiplyScalar((value+1));
+            // TODO: Set texture
+        };
 
         return TileValue;
     }

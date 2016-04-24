@@ -20,6 +20,6 @@
   "dependencies": {
     "pixi": "~3.0.8",
     "requirejs": "~2.1.20",
-    "three.js": "threejs#*"
+    "threejs": "r76"
   }
 }

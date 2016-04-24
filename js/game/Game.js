@@ -148,7 +148,6 @@ function(Pixi, Three, Cube)
                 break;
         }
 
-
         this.cube.update(delta);
 
     };

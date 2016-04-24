@@ -1,7 +1,7 @@
-define(["Three"],
-    function(Three)
+define(["Three", "game/TileValue"],
+    function(Three, TileValue)
     {
-        function Tile(threeScene, x, y, z)
+        function Tile(threeScene, x, y, z, value)
         {
             this.geometry = new Three.BoxGeometry( Tile.SIZE, Tile.SIZE, Tile.SIZE );
 
@@ -14,6 +14,8 @@ define(["Three"],
             this.state = Tile.State.NORMAL;
 
             this.sceneObject.position.set(x,y,z);
+
+            this.value = new TileValue(threeScene, x, y, z);
         }
 
         Tile.State = {

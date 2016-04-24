@@ -2,7 +2,7 @@ requirejs.config({
     baseUrl: 'js',
     paths: {
         Pixi: '../bower_components/pixi/bin/pixi',
-        Three: '../bower_components/three.js/build/three'
+        Three: '../bower_components/threejs/build/three'
     },
     shim: {
         Three: {
